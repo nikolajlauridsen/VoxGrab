@@ -2,7 +2,7 @@ import requests
 import glob
 import hashlib
 import os
-
+from time import sleep
 
 # this hash function receives the name of the file and returns the hash code
 def get_hash(name):
@@ -21,6 +21,7 @@ format = input("file format: ")
 files = glob.glob('*.' + format)
 headers = {'User-Agent': user_agent}
 fail_count = 0
+max_fails = 10
 
 for file in files:
     f_hash = get_hash(file)
@@ -32,9 +33,12 @@ for file in files:
         f.write(response.content)
         f.close
         print("done")
+        fail_count = 0
     else:
         print("There's unfortunately no subtitle for this file at the moment")
         fail_count += 1
 
-    if fail_count > 8:
+    if fail_count > max_fails:
+        print("More than " + str(max_fails) + " files has failed in a row, exiting script.")
         break
+sleep(2)
