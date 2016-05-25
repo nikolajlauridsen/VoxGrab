@@ -17,8 +17,8 @@ def get_hash(name):
 base_url = 'http://api.thesubdb.com/'
 user_agent = "SubDB/1.0 (PySubDBAutoFill/0.1; http://github.com/nikolajlauridsenn/PySubDB"
 
-format = input("file format: ")
-files = glob.glob('*.' + format)
+file_format = input("file format: ")
+files = glob.glob('*.' + file_format)
 headers = {'User-Agent': user_agent}
 fail_count = 0
 max_fails = 10
@@ -26,16 +26,16 @@ max_fails = 10
 for file in files:
     f_hash = get_hash(file)
     payload = {'action': 'download', 'hash': f_hash, 'language': 'en'}
-    print("Getting subtitle for " + file)
+    print("Getting subtitle for " + file + "...", end="")
     response = requests.get(base_url, headers=headers, params=payload)
     if response.status_code == 200:
         f = open(file + '.srt', 'wb')
         f.write(response.content)
         f.close
-        print("done")
+        print("Done!\n")
         fail_count = 0
     else:
-        print("There's unfortunately no subtitle for this file at the moment")
+        print("\nThere's unfortunately no subtitle for this file at the moment\n")
         fail_count += 1
 
     if fail_count > max_fails:
