@@ -2,7 +2,9 @@ import requests
 import glob
 import hashlib
 import os
+import re
 from time import sleep
+
 
 # this hash function receives the name of the file and returns the hash code
 def get_hash(name):
@@ -16,14 +18,21 @@ def get_hash(name):
 
 base_url = 'http://api.thesubdb.com/'
 user_agent = "SubDB/1.0 (PySubDBAutoFill/0.1; http://github.com/nikolajlauridsenn/PySubDB"
-
-file_format = input("file format: ")
-files = glob.glob('*.' + file_format)
 headers = {'User-Agent': user_agent}
+
+files = glob.glob('*')
+media_files = []
+for file in files:
+    media_re = re.search(r"^\S*?\.(mp4|avi|mkv)$", file)
+    if media_re:
+        media_files.append(file)
+    else:
+        pass
+
 fail_count = 0
 max_fails = 10
 
-for file in files:
+for file in media_files:
     f_hash = get_hash(file)
     payload = {'action': 'download', 'hash': f_hash, 'language': 'en'}
     print("Getting subtitle for " + file + "...", end="")
