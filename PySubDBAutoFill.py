@@ -17,13 +17,13 @@ def get_hash(name):
     return hashlib.md5(data).hexdigest()
 
 base_url = 'http://api.thesubdb.com/'
-user_agent = "SubDB/1.0 (PySubDBAutoFill/0.1; http://github.com/nikolajlauridsenn/PySubDB"
+user_agent = "SubDB/1.0 (PySubDBAutoFill/0.2; https://github.com/nikolajlauridsen/PySubDBAutoFill"
 headers = {'User-Agent': user_agent}
 
 files = glob.glob('*')
 media_files = []
 for file in files:
-    media_re = re.search(r"^\S*?\.(mp4|avi|mkv)$", file)
+    media_re = re.search(r"^[\s\S]*?\.(mp4|avi|mkv)$", file)
     if media_re:
         media_files.append(file)
     else:
