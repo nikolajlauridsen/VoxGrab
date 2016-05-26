@@ -38,7 +38,7 @@ for file in media_files:
     print("Getting subtitle for " + file + "...", end="")
     response = requests.get(base_url, headers=headers, params=payload)
     if response.status_code == 200:
-        f = open(file + '.srt', 'wb')
+        f = open(file[:-4] + '.srt', 'wb')
         f.write(response.content)
         f.close
         print("Done!\n")
