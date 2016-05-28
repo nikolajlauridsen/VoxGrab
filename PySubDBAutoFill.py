@@ -1,3 +1,9 @@
+"""
+A script that automatically queries theSubDB database for subtitles to all the
+media tv shows and movies in the current folder.
+The regex expression that sorts the files is currently set to mp4, avi and mkv
+since those are the file types commonly associated with movies and tv shows.
+"""
 import requests
 import glob
 import hashlib
@@ -33,9 +39,9 @@ fail_count = 0
 max_fails = 10
 
 for file in media_files:
+    print("Getting subtitle for " + file + "...", end="")
     f_hash = get_hash(file)
     payload = {'action': 'download', 'hash': f_hash, 'language': 'en'}
-    print("Getting subtitle for " + file + "...", end="")
     response = requests.get(base_url, headers=headers, params=payload)
     if response.status_code == 200:
         f = open(file[:-4] + '.srt', 'wb')
