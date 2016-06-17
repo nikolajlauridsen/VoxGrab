@@ -1,7 +1,7 @@
 """
-A script that automatically queries theSubDB database for subtitles to all the
-media tv shows and movies in the current folder.
-The regex expression that sorts the files is currently set to mp4, avi and mkv
+A script which automatically queries theSubDB database for subtitles to all the
+tv shows and movies in the current folder.
+The regex expression that sorts the files is currently tuned to mp4, avi and mkv
 since those are the file types commonly associated with movies and tv shows.
 """
 import requests
@@ -45,8 +45,9 @@ for file in media_files:
     response = requests.get(base_url, headers=headers, params=payload)
     if response.status_code == 200:
         f = open(file[:-4] + '.srt', 'wb')
-        f.write(response.content)
-        f.close
+        for chunk in response.iter_content(100000):
+            f.write(chunk)
+        f.close()
         print("Done!\n")
         fail_count = 0
     else:
