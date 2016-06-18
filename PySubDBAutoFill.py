@@ -1,8 +1,9 @@
 """
-A script which automatically queries theSubDB database for subtitles to all the
+A script that automatically queries theSubDB database for subtitles to all the
 tv shows and movies in the current folder.
-The regex expression that sorts the files is currently tuned to mp4, avi and mkv
-since those are the file types commonly associated with movies and tv shows.
+The regex expression that sorts the files is currently
+tuned to mp4, avi and mkv since those are the file types commonly
+associated with movies and tv shows.
 """
 import requests
 import glob
@@ -22,8 +23,11 @@ def get_hash(name):
         data += f.read(readsize)
     return hashlib.md5(data).hexdigest()
 
+print('Getting subtitles...')
+
 base_url = 'http://api.thesubdb.com/'
-user_agent = "SubDB/1.0 (PySubDBAutoFill/0.2; https://github.com/nikolajlauridsen/PySubDBAutoFill"
+user_agent = 'SubDB/1.0 (PySubDBAutoFill/0.2;' \
+             ' https://github.com/nikolajlauridsen/PySubDBAutoFill'
 headers = {'User-Agent': user_agent}
 
 files = glob.glob('*')
@@ -45,16 +49,17 @@ for file in media_files:
     response = requests.get(base_url, headers=headers, params=payload)
     if response.status_code == 200:
         f = open(file[:-4] + '.srt', 'wb')
-        for chunk in response.iter_content(100000):
-            f.write(chunk)
-        f.close()
+        f.write(response.content)
+        f.close
         print("Done!\n")
         fail_count = 0
     else:
-        print("\nThere's unfortunately no subtitle for this file at the moment\n")
+        print('\nThere\'s unfortunately no subtitle' +
+              ' for this file at the moment\n')
         fail_count += 1
 
     if fail_count > max_fails:
-        print("More than " + str(max_fails) + " files has failed in a row, exiting script.")
+        print('More than ' + str(max_fails) +
+              ' files has failed in a row, exiting script.')
         break
-sleep(2)
+sleep(0.5)
