@@ -33,7 +33,7 @@ headers = {'User-Agent': user_agent}
 files = glob.glob('*')
 media_files = []
 for file in files:
-    media_re = re.search(r"^[\s\S]*?\.(mp4|avi|mkv)$", file)
+    media_re = re.search(r"^[\s\S]*?\.(mp4|avi|mkv|m4v)$", file)
     if media_re:
         media_files.append(file)
     else:
@@ -54,12 +54,12 @@ for file in media_files:
         print("Done!\n")
         fail_count = 0
     else:
-        print('\nThere\'s unfortunately no subtitle'
+        print('\nThere\'s unfortunately no subtitle' +
               ' for this file at the moment\n')
         fail_count += 1
 
     if fail_count > max_fails:
-        print('More than ' + str(max_fails)
+        print('More than ' + str(max_fails) +
               ' files has failed in a row, exiting script.')
         break
 sleep(0.5)
