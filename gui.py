@@ -2,6 +2,8 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
 
+from downloader import Downloader
+
 import os
 
 
@@ -21,11 +23,17 @@ class SubDownload(Frame):
     def get_files(self):
         self.files = os.listdir(path=self.directory)
 
+    def download_subs(self):
+        self.get_files()
+        dl = Downloader(self.directory, self.files)
+        dl.sort_files()
+        dl.download_files()
+
     def create_widgets(self):
         self.title_label = ttk.Label(text='Subtitle downloader').grid(column=2, row=1, sticky=S)
 
-        self.print_button = ttk.Button(root, text='Print dir',
-                                       command=self.print_dir).grid(column=2, row=3, sticky=S)
+        self.print_button = ttk.Button(root, text='Download subs',
+                                       command=self.download_subs).grid(column=2, row=3, sticky=S)
         self.choose_dir = ttk.Button(root, text='Choose folder',
                                      command=self.get_directory).grid(column=1, row=3, sticky=S)
         self.print_files = ttk.Button(root, text='Print files',
