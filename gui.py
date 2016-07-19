@@ -22,13 +22,14 @@ class SubDownload(Frame):
         self.files = os.listdir(path=self.directory)
 
     def create_widgets(self):
-        self.title_label = ttk.Label(text='Subtitle downloader').grid(column=2, row=1, sticky=NSEW)
+        self.title_label = ttk.Label(text='Subtitle downloader').grid(column=2, row=1, sticky=S)
+
         self.print_button = ttk.Button(root, text='Print dir',
-                                       command=self.print_dir).grid(column=2, row=2, sticky=S)
+                                       command=self.print_dir).grid(column=2, row=3, sticky=S)
         self.choose_dir = ttk.Button(root, text='Choose folder',
-                                     command=self.get_directory).grid(column=1, row=2, sticky=S)
+                                     command=self.get_directory).grid(column=1, row=3, sticky=S)
         self.print_files = ttk.Button(root, text='Print files',
-                                      command=self.print_files).grid(column=3, row=2, sticky=S)
+                                      command=self.print_files).grid(column=3, row=3, sticky=S)
 
     def __init__(self, master=None):
         Frame.__init__(self, master)
