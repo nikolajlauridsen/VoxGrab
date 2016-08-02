@@ -1,3 +1,6 @@
+"""
+Class handling interaction with thesubdb api
+"""
 import requests
 import hashlib
 import os
