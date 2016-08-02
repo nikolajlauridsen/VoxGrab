@@ -5,28 +5,31 @@ from tkinter import filedialog
 from downloader import Downloader
 
 import os
+import re
 
 
 class SubDownload(Frame):
 
-    def print_dir(self):
-        print(self.directory)
-
     def print_files(self):
-        self.get_files()
         for file in self.files:
             print(file)
 
     def get_directory(self):
         self.directory = filedialog.askdirectory()
+        self.files = self.sort_files(os.listdir(path=self.directory))
 
-    def get_files(self):
-        self.files = os.listdir(path=self.directory)
+    def sort_files(self, files):
+        media_files = []
+        for file in files:
+            media_re = re.search(r"^[\s\S]*?\.(mp4|avi|mkv|m4v)$", file)
+            if media_re:
+                media_files.append(file)
+            else:
+                pass
+        return media_files
 
     def download_subs(self):
-        self.get_files()
         dl = Downloader(self.directory, self.files)
-        dl.sort_files()
         dl.download_files()
 
     def create_widgets(self):
