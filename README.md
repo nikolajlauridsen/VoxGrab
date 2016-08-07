@@ -6,8 +6,3 @@ Put the script in the folder with the media and then execute.
 
 ###Dependencies:
 * requests
-* glob
-* hashlib
-* os
-* re
-* time
