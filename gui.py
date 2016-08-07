@@ -10,10 +10,6 @@ import re
 
 class SubDownload(Frame):
 
-    def print_files(self):
-        for file in self.files:
-            print(file)
-
     def get_directory(self):
         self.directory = filedialog.askdirectory()
         self.files = self.sort_files(os.listdir(path=self.directory))
@@ -37,29 +33,31 @@ class SubDownload(Frame):
         return media_files
 
     def download_subs(self):
+        self.status.set('Downloading subtitles.')
         dl = Downloader(self.directory, self.files)
         dl.download_files()
+        self.status.set('Done Downloading subtitles.')
+
 
     def create_widgets(self):
         self.title_label = ttk.Label(text='Subtitle downloader').grid(column=2, row=1, sticky=S)
 
-        self.print_button = ttk.Button(root, text='Download subs',
-                                       command=self.download_subs).grid(column=2, row=3, sticky=S)
+        self.download_button = ttk.Button(root, text='Download subs',
+                                          command=self.download_subs).grid(column=3, row=3, sticky=W)
         self.choose_dir = ttk.Button(root, text='Choose folder',
-                                     command=self.get_directory).grid(column=1, row=3, sticky=S)
-        self.print_files = ttk.Button(root, text='Print files',
-                                      command=self.print_files).grid(column=3, row=3, sticky=S)
+                                     command=self.get_directory).grid(column=1, row=3, sticky=E)
 
         self.canvas = Canvas(root, borderwidth=0, background="#ffffff")
         self.frame = Frame(self.canvas, background="#ffffff")
         self.vsb = Scrollbar(root, orient="vertical", command=self.canvas.yview)
         self.canvas.configure(yscrollcommand=self.vsb.set)
 
-        self.vsb.grid(column=4, row=1, rowspan=3)
+        self.vsb.grid(column=4, row=1, rowspan=2)
         self.canvas.grid(column=1, row=2, columnspan=3)
         self.canvas.create_window((4,4), window=self.frame, anchor="nw",
                                   tags="self.frame")
         self.frame.bind("<Configure>", self.onFrameConfigure)
+        self.status_label = Label(root, textvariable=self.status).grid(column=2, row=4, sticky=S)
 
     def onFrameConfigure(self, event):
         """Reset the scroll region to encompass the inner frame"""
@@ -69,6 +67,7 @@ class SubDownload(Frame):
         Frame.__init__(self, master)
         self.directory = 'Please choose a directory'
         self.files = []
+        self.status = StringVar()
         self.create_widgets()
 
 root = Tk()
