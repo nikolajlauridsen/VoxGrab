@@ -29,8 +29,6 @@ class Downloader():
 
     def download_files(self):
         os.chdir(self.directory)
-        fail_count = 0
-        max_fails = 10
 
         for file in self.files:
             print("Getting subtitle for " + file + "...", end="")
@@ -44,4 +42,4 @@ class Downloader():
                 print("Done!\n")
             else:
                 print('\nThere\'s unfortunately no subtitle' +
-                      ' for this file at the moment\n')
+				' for this file at the moment\n')

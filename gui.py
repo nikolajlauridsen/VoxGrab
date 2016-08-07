@@ -17,6 +17,14 @@ class SubDownload(Frame):
     def get_directory(self):
         self.directory = filedialog.askdirectory()
         self.files = self.sort_files(os.listdir(path=self.directory))
+        self.populate()
+
+    def populate(self):
+        i = 0
+        for row in self.files:
+            Label(self.frame, text=row, width=54, borderwidth="1",
+                  relief="solid").grid(row=i, column=0)
+            i += 1
 
     def sort_files(self, files):
         media_files = []
@@ -41,6 +49,21 @@ class SubDownload(Frame):
                                      command=self.get_directory).grid(column=1, row=3, sticky=S)
         self.print_files = ttk.Button(root, text='Print files',
                                       command=self.print_files).grid(column=3, row=3, sticky=S)
+
+        self.canvas = Canvas(root, borderwidth=0, background="#ffffff")
+        self.frame = Frame(self.canvas, background="#ffffff")
+        self.vsb = Scrollbar(root, orient="vertical", command=self.canvas.yview)
+        self.canvas.configure(yscrollcommand=self.vsb.set)
+
+        self.vsb.grid(column=4, row=1, rowspan=3)
+        self.canvas.grid(column=1, row=2, columnspan=3)
+        self.canvas.create_window((4,4), window=self.frame, anchor="nw",
+                                  tags="self.frame")
+        self.frame.bind("<Configure>", self.onFrameConfigure)
+
+    def onFrameConfigure(self, event):
+        """Reset the scroll region to encompass the inner frame"""
+        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
 
     def __init__(self, master=None):
         Frame.__init__(self, master)
