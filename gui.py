@@ -34,6 +34,7 @@ class SubDownload(Frame):
 
     def download_subs(self):
         self.status.set('Downloading subtitles.')
+        root.update()
         dl = Downloader(self.directory, self.files)
         dl.download_files()
         self.status.set('Done Downloading subtitles.')
