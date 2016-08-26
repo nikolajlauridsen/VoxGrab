@@ -6,8 +6,8 @@ import hashlib
 import os
 
 
-# this hash function receives the name of the file and returns the hash code
 def get_hash(name):
+    """Generate and return hash for a file"""
     readsize = 64 * 1024
     with open(name, 'rb') as f:
         size = os.path.getsize(name)
@@ -27,6 +27,7 @@ class Downloader():
         self.directory = directory
 
     def download_file(self, file):
+        """Request subtitle from thesubdb api and return true/false"""
         os.chdir(self.directory)
 
         print("Getting subtitle for " + file["fileName"] + "...", end="")
