@@ -26,7 +26,7 @@ class Downloader():
         self.header = {'User-Agent': self.user_agent}
         self.directory = directory
 
-    def download_files(self, file):
+    def download_file(self, file):
         os.chdir(self.directory)
 
         print("Getting subtitle for " + file["fileName"] + "...", end="")
@@ -38,6 +38,8 @@ class Downloader():
             f.write(response.content)
             f.close
             print("Done!\n")
+            return True
         else:
             print('\nThere\'s unfortunately no subtitle'
                     ' for this file at the moment\n')
+            return False

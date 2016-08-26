@@ -25,7 +25,7 @@ class SubDownload(Frame):
         self.choose_dir = ttk.Button(root, text='Choose folder',
                                      command=self.get_directory).grid(column=1, row=3, sticky=E)
 
-        self.canvas = Canvas(root, borderwidth=0, background="#ffffff")
+        self.canvas = Canvas(root, borderwidth=0, background="#ffffff", width=600, height=400)
         self.frame = Frame(self.canvas, background="#ffffff")
         self.vsb = Scrollbar(root, orient="vertical", command=self.canvas.yview)
         self.canvas.configure(yscrollcommand=self.vsb.set)
@@ -45,7 +45,7 @@ class SubDownload(Frame):
     def populate(self):
         i = 0
         for file in self.files:
-            Label(self.frame, text=file["fileName"], width=54, borderwidth="1",
+            Label(self.frame, text=file["fileName"], width=70, borderwidth="1",
                   relief="solid").grid(row=i, column=0)
             file["row"] = i
             i += 1
@@ -55,8 +55,7 @@ class SubDownload(Frame):
         for file in files:
             media_re = re.search(r"^[\s\S]*?\.(mp4|avi|mkv|m4v)$", file)
             if media_re:
-                context = {"fileName": file,
-                           "status": "waiting"}
+                context = {"fileName": file}
                 media_files.append(context)
             else:
                 pass
@@ -67,7 +66,15 @@ class SubDownload(Frame):
         root.update()
         dl = Downloader(self.directory)
         for file in self.files:
-            dl.download_files(file)
+            status = dl.download_file(file)
+            if status:
+                Label(self.frame, text="Succeeded", width="14", borderwidth="1",
+                      relief="solid").grid(row = file["row"], column=1)
+                root.update()
+            else:
+                Label(self.frame, text="NaN", width="14", borderwidth="1",
+                      relief="solid").grid(row=file["row"], column=1)
+                root.update()
         self.status.set('Done Downloading subtitles.')
 
 
