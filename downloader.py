@@ -19,27 +19,25 @@ def get_hash(name):
 
 class Downloader():
 
-    def __init__(self, directory, files):
+    def __init__(self, directory):
         self.base_url = 'http://api.thesubdb.com/'
         self.user_agent = 'SubDB/1.0 (PySubDBAutoFill/0.2;' \
                           ' https://github.com/nikolajlauridsen/PySubDBAutoFill'
         self.header = {'User-Agent': self.user_agent}
-        self.files = files
         self.directory = directory
 
-    def download_files(self):
+    def download_files(self, file):
         os.chdir(self.directory)
 
-        for file in self.files:
-            print("Getting subtitle for " + file["fileName"] + "...", end="")
-            f_hash = get_hash(file["fileName"])
-            payload = {'action': 'download', 'hash': f_hash, 'language': 'en'}
-            response = requests.get(self.base_url, headers=self.header, params=payload)
-            if response.status_code == 200:
-                f = open(file["fileName"][:-4] + '.srt', 'wb')
-                f.write(response.content)
-                f.close
-                print("Done!\n")
-            else:
-                print('\nThere\'s unfortunately no subtitle'
-                      ' for this file at the moment\n')
+        print("Getting subtitle for " + file["fileName"] + "...", end="")
+        f_hash = get_hash(file["fileName"])
+        payload = {'action': 'download', 'hash': f_hash, 'language': 'en'}
+        response = requests.get(self.base_url, headers=self.header, params=payload)
+        if response.status_code == 200:
+            f = open(file["fileName"][:-4] + '.srt', 'wb')
+            f.write(response.content)
+            f.close
+            print("Done!\n")
+        else:
+            print('\nThere\'s unfortunately no subtitle'
+                    ' for this file at the moment\n')
