@@ -42,11 +42,18 @@ class SubDownload(Frame):
         self.files = self.sort_files(os.listdir(path=self.directory))
         self.populate()
 
+    def clear_download_frame(self):
+        for widget in self.frame.winfo_children():
+            widget.destroy()
+
     def populate(self):
+        self.clear_download_frame()
         i = 0
         for file in self.files:
             Label(self.frame, text=file["fileName"], width=70, borderwidth="1",
                   relief="solid").grid(row=i, column=0)
+            Label(self.frame, text="Waiting", width="14", borderwidth="1",
+                  relief="solid").grid(row=i, column=1)
             file["row"] = i
             i += 1
 
