@@ -31,15 +31,15 @@ class Downloader():
         os.chdir(self.directory)
 
         for file in self.files:
-            print("Getting subtitle for " + file + "...", end="")
-            f_hash = get_hash(file)
+            print("Getting subtitle for " + file["fileName"] + "...", end="")
+            f_hash = get_hash(file["fileName"])
             payload = {'action': 'download', 'hash': f_hash, 'language': 'en'}
             response = requests.get(self.base_url, headers=self.header, params=payload)
             if response.status_code == 200:
-                f = open(file[:-4] + '.srt', 'wb')
+                f = open(file["fileName"][:-4] + '.srt', 'wb')
                 f.write(response.content)
                 f.close
                 print("Done!\n")
             else:
-                print('\nThere\'s unfortunately no subtitle' +
-				' for this file at the moment\n')
+                print('\nThere\'s unfortunately no subtitle'
+                      ' for this file at the moment\n')
