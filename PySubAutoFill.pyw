@@ -23,16 +23,16 @@ class SubDownload(Frame):
         self.title_label = ttk.Label(text='Subtitle downloader').grid(column=2, row=1, sticky=S, pady=5)
 
         self.download_button = ttk.Button(root, text='Download subs',
-                                          command=self.download_subs).grid(column=3, row=3, sticky=W)
+                                          command=self.download_subs).grid(column=2, row=3, sticky=E)
         self.choose_dir = ttk.Button(root, text='Choose folder',
-                                     command=self.load_files).grid(column=1, row=3, sticky=E)
+                                     command=self.load_files).grid(column=2, row=3, sticky=W)
 
-        self.canvas = Canvas(root, borderwidth=0, background="#ffffff", width=600, height=400)
-        self.file_frame = Frame(self.canvas, background="#ffffff")
+        self.canvas = Canvas(root, borderwidth=0, background="#eeeeee", width=600, height=400)
+        self.file_frame = Frame(self.canvas)
         self.vsb = Scrollbar(root, orient="vertical", command=self.canvas.yview)
         self.canvas.configure(yscrollcommand=self.vsb.set)
 
-        self.vsb.grid(column=4, row=1, rowspan=2)
+        self.vsb.grid(column=4, row=2, rowspan=1, padx=(0,5), sticky=N+S+W)
         self.canvas.grid(column=1, row=2, columnspan=3, padx=(15,0), pady=(0,10))
         self.canvas.create_window((4,4), window=self.file_frame, anchor="nw",
                                   tags="self.file_frame")
@@ -54,14 +54,14 @@ class SubDownload(Frame):
     def populate(self):
         """Populate/refresh file_frame"""
         self.clear_download_frame()
-        i = 0
-        for file in self.files:
-            Label(self.file_frame, text=file["fileName"], width=70, borderwidth="1",
-                  relief="solid").grid(row=i, column=0)
+
+        for i, file in enumerate(self.files):
+            Label(self.file_frame, text=file["fileName"], width=70,
+                  borderwidth="1", relief="solid").grid(row=i, column=0)
+
             Label(self.file_frame, text="Waiting", width="14", borderwidth="1",
                   relief="solid").grid(row=i, column=1)
             file["row"] = i
-            i += 1
 
     def sort_files(self, files):
         """Sort out non media files"""
@@ -91,7 +91,6 @@ class SubDownload(Frame):
                       relief="solid").grid(row=file["row"], column=1)
                 root.update()
         self.status.set('Done Downloading subtitles.')
-
 
     def onFrameConfigure(self, event):
         """Reset the scroll region to encompass the inner file_frame"""
