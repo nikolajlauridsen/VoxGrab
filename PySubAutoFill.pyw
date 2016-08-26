@@ -15,11 +15,12 @@ class SubDownload(Frame):
         self.directory = 'Please choose a directory'
         self.files = []
         self.status = StringVar()
+        self.status.set("Please choose a folder")
         self.create_widgets()
 
     def create_widgets(self):
-        """create widgets (saves __init__ from becoming overly long"""
-        self.title_label = ttk.Label(text='Subtitle downloader').grid(column=2, row=1, sticky=S)
+        """create widgets (saves __init__ from becoming overly long)"""
+        self.title_label = ttk.Label(text='Subtitle downloader').grid(column=2, row=1, sticky=S, pady=5)
 
         self.download_button = ttk.Button(root, text='Download subs',
                                           command=self.download_subs).grid(column=3, row=3, sticky=W)
@@ -32,7 +33,7 @@ class SubDownload(Frame):
         self.canvas.configure(yscrollcommand=self.vsb.set)
 
         self.vsb.grid(column=4, row=1, rowspan=2)
-        self.canvas.grid(column=1, row=2, columnspan=3)
+        self.canvas.grid(column=1, row=2, columnspan=3, padx=(15,0), pady=(0,10))
         self.canvas.create_window((4,4), window=self.file_frame, anchor="nw",
                                   tags="self.file_frame")
         self.file_frame.bind("<Configure>", self.onFrameConfigure)
@@ -43,6 +44,7 @@ class SubDownload(Frame):
         self.directory = filedialog.askdirectory()
         self.files = self.sort_files(os.listdir(path=self.directory))
         self.populate()
+        self.status.set("Click download")
 
     def clear_download_frame(self):
         """Clears file_frame"""

@@ -21,7 +21,7 @@ class Downloader():
 
     def __init__(self, directory):
         self.base_url = 'http://api.thesubdb.com/'
-        self.user_agent = 'SubDB/1.0 (PySubDBAutoFill/0.2;' \
+        self.user_agent = 'SubDB/1.0 (pyAutoSubs/0.9;' \
                           ' https://github.com/nikolajlauridsen/PySubDBAutoFill'
         self.header = {'User-Agent': self.user_agent}
         self.directory = directory
