@@ -37,6 +37,8 @@ class SubDownload(Frame):
         self.canvas.create_window((4,4), window=self.file_frame, anchor="nw",
                                   tags="self.file_frame")
         self.file_frame.bind("<Configure>", self.onFrameConfigure)
+        self.file_frame.bind('<Enter>', self._bound_to_mousewheel)
+        self.file_frame.bind('<Leave>', self._unbound_to_mousewheel)
         self.status_label = Label(root, textvariable=self.status).grid(column=2, row=4, sticky=S)
 
     def load_files(self):
@@ -95,6 +97,15 @@ class SubDownload(Frame):
     def onFrameConfigure(self, event):
         """Reset the scroll region to encompass the inner file_frame"""
         self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+
+    def _bound_to_mousewheel(self, event):
+        self.canvas.bind_all("<MouseWheel>", self._on_mousewheel)
+
+    def _unbound_to_mousewheel(self, event):
+        self.canvas.unbind_all("<MouseWheel>")
+
+    def _on_mousewheel(self, event):
+        self.canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
 
 
 
