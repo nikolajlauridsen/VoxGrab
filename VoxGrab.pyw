@@ -46,15 +46,15 @@ class SubDownload(Frame):
     def create_widgets(self):
         """create widgets (saves __init__ from becoming overly long)"""
         # Create & place labels
-        self.title_label = ttk.Label(text='Subtitle downloader').grid(column=2, row=1, sticky=S, pady=5)
-        self.status_label = Label(root, textvariable=self.status).grid(column=2, row=4, sticky=S)
+        self.title_label = ttk.Label(text='Subtitle downloader').grid(column=2, row=1, sticky=W, pady=5)
+        self.status_label = Label(root, textvariable=self.status).grid(column=2, row=4, sticky=W)
 
         # Create & place buttons
         self.choose_dir = ttk.Button(root, text='Choose folder',
                                      command=self.load_files).grid(column=2, row=3, sticky=W, pady=5)
         self.download_button = ttk.Button(root, text='Download subs',
                                           command=self.download_subs).grid(column=2, row=3, sticky=E)
-        self.file_Checkbutton = Checkbutton(root, text="Skip downloaded files",
+        self.file_Checkbutton = Checkbutton(root, text="Skip downloaded subs",
                                             variable=self.check_flag, justify=LEFT).grid(column=1, row=3, sticky=W+E)
 
         # Crate canvas, file_frame and vertical scrollbar (subtitle area)
@@ -75,10 +75,13 @@ class SubDownload(Frame):
 
     def load_files(self):
         """Prompt for directory, load files and populate gui"""
-        self.directory = filedialog.askdirectory()
-        self.files = self.sort_files(os.listdir(path=self.directory))
-        self.populate()
-        self.status.set("Click download")
+        try:
+            self.directory = filedialog.askdirectory()
+            self.files = self.sort_files(os.listdir(path=self.directory))
+            self.populate()
+            self.status.set("Click download")
+        except FileNotFoundError:
+            self.status.set("That's not a folder")
 
     def clear_download_frame(self):
         """Clears file_frame"""
