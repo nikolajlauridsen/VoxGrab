@@ -1,5 +1,4 @@
 """
-Class handling interaction with thesubdb api
 MIT License
 
 Copyright (c) [2016] [Nikolaj Lauridsen]
@@ -39,6 +38,7 @@ def get_hash(name):
 
 
 class Downloader():
+    """Class handling interaction with thesubdb api"""
 
     def __init__(self, directory):
         self.base_url = 'http://api.thesubdb.com/'
@@ -59,10 +59,13 @@ class Downloader():
             payload = {'action': 'download', 'hash': f_hash, 'language': 'en'}
             response = requests.get(self.base_url, headers=self.header, params=payload)
             if response.status_code == 200:
-                f = open(file["fileName"][:-4] + '.srt', 'wb')
-                f.write(response.content)
-                f.close
-                file["status"] = "Succeeded"
-                print("Done!\n")
+                try:
+                    with open(file["fileName"][:-4] + '.srt', 'wb') as subtitle:
+                        for chunk in response.iter_content(4096):
+                            subtitle.write(chunk)
+                        subtitle.close
+                    file["status"] = "Succeeded"
+                except:
+                    file["status"] = "Failed"
             else:
                 file["status"] = "NaN"
