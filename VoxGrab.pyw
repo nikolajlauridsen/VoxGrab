@@ -89,7 +89,7 @@ class SubDownload(Frame):
             Label(self.file_frame, text=file["fileName"], width=70,
                   borderwidth="1", relief="solid").grid(row=i, column=0)
 
-            Label(self.file_frame, text="Waiting", width="14", borderwidth="1",
+            Label(self.file_frame, text=file["status"], width="14", borderwidth="1",
                   relief="solid").grid(row=i, column=1)
             file["row"] = i
 
@@ -99,7 +99,8 @@ class SubDownload(Frame):
         for file in files:
             media_re = re.search(r"^[\s\S]*?\.(mp4|avi|mkv|m4v)$", file)
             if media_re:
-                context = {"fileName": file}
+                context = {"fileName": file,
+                           "status": "Waiting"}
                 media_files.append(context)
             else:
                 pass
@@ -111,15 +112,10 @@ class SubDownload(Frame):
         root.update()
         dl = Downloader(self.directory)
         for file in self.files:
-            status = dl.download_file(file)
-            if status:
-                Label(self.file_frame, text="Succeeded", width="14", borderwidth="1",
-                      relief="solid").grid(row = file["row"], column=1)
-                root.update()
-            else:
-                Label(self.file_frame, text="NaN", width="14", borderwidth="1",
-                      relief="solid").grid(row=file["row"], column=1)
-                root.update()
+            dl.download_file(file)
+            Label(self.file_frame, text=file["status"], width="14", borderwidth="1",
+                  relief="solid").grid(row = file["row"], column=1)
+            root.update()
         self.status.set('Done Downloading subtitles.')
 
     def onFrameConfigure(self, event):
@@ -139,7 +135,7 @@ class SubDownload(Frame):
         self.canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
 
 root = Tk()
-root.title('Subtitle downloader')
+root.title('VoxGrab')
 
 app = SubDownload(master=root)
 app.mainloop()

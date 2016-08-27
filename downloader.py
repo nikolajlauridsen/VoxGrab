@@ -50,18 +50,22 @@ class Downloader():
     def download_file(self, file):
         """Request subtitle from thesubdb api and return true/false"""
         os.chdir(self.directory)
+        file_path = file["fileName"][:-4] + '.srt'
+        if os.path.isfile(file_path):
+            file["status"] = "Skipped"
 
-        print("Getting subtitle for " + file["fileName"] + "...", end="")
-        f_hash = get_hash(file["fileName"])
-        payload = {'action': 'download', 'hash': f_hash, 'language': 'en'}
-        response = requests.get(self.base_url, headers=self.header, params=payload)
-        if response.status_code == 200:
-            f = open(file["fileName"][:-4] + '.srt', 'wb')
-            f.write(response.content)
-            f.close
-            print("Done!\n")
-            return True
         else:
-            print('\nThere\'s unfortunately no subtitle'
-                    ' for this file at the moment\n')
-            return False
+            print("Getting subtitle for " + file["fileName"] + "...", end="")
+            f_hash = get_hash(file["fileName"])
+            payload = {'action': 'download', 'hash': f_hash, 'language': 'en'}
+            response = requests.get(self.base_url, headers=self.header, params=payload)
+            if response.status_code == 200:
+                f = open(file["fileName"][:-4] + '.srt', 'wb')
+                f.write(response.content)
+                f.close
+                file["status"] = "Succeeded"
+                print("Done!\n")
+            else:
+                file["status"] = "NaN"
+                print('\nThere\'s unfortunately no subtitle'
+                        ' for this file at the moment\n')
