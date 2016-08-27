@@ -40,18 +40,19 @@ def get_hash(name):
 class Downloader():
     """Class handling interaction with thesubdb api"""
 
-    def __init__(self, directory):
+    def __init__(self, directory, check_flag):
         self.base_url = 'http://api.thesubdb.com/'
         self.user_agent = 'SubDB/1.0 (VoxGrab/1.0;' \
                           ' https://github.com/nikolajlauridsen/PySubDBAutoFill'
         self.header = {'User-Agent': self.user_agent}
         self.directory = directory
+        self.check_flag = check_flag
 
     def download_file(self, file):
         """Request subtitle from thesubdb api and return true/false"""
         os.chdir(self.directory)
         file_path = file["fileName"][:-4] + '.srt'
-        if os.path.isfile(file_path):
+        if os.path.isfile(file_path) and self.check_flag == 1:
             file["status"] = "Skipped"
 
         else:

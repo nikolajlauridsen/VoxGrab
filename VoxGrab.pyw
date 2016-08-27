@@ -38,6 +38,8 @@ class SubDownload(Frame):
         self.directory = 'Please choose a directory'
         self.files = []
         self.status = StringVar()
+        self.check_flag = IntVar()  # 1 for True 0 for false
+        self.check_flag.set(1)      # Set default state to true
         self.status.set("Please choose a folder")
         self.create_widgets()
 
@@ -49,9 +51,11 @@ class SubDownload(Frame):
 
         # Create & place buttons
         self.choose_dir = ttk.Button(root, text='Choose folder',
-                                     command=self.load_files).grid(column=2, row=3, sticky=W)
+                                     command=self.load_files).grid(column=2, row=3, sticky=W, pady=5)
         self.download_button = ttk.Button(root, text='Download subs',
                                           command=self.download_subs).grid(column=2, row=3, sticky=E)
+        self.file_Checkbutton = Checkbutton(root, text="Skip downloaded files",
+                                            variable=self.check_flag, justify=LEFT).grid(column=1, row=3, sticky=W+E)
 
         # Crate canvas, file_frame and vertical scrollbar (subtitle area)
         self.canvas = Canvas(root, borderwidth=0, background="#f0f0f0", width=600, height=400)
@@ -110,7 +114,7 @@ class SubDownload(Frame):
         """Attempt to download subs to all files in self.files and set status label"""
         self.status.set('Downloading subtitles.')
         root.update()
-        dl = Downloader(self.directory)
+        dl = Downloader(self.directory, self.check_flag.get())
         for file in self.files:
             dl.download_file(file)
             Label(self.file_frame, text=file["status"], width="14", borderwidth="1",
