@@ -55,7 +55,6 @@ class Downloader():
             file["status"] = "Skipped"
 
         else:
-            print("Getting subtitle for " + file["fileName"] + "...", end="")
             f_hash = get_hash(file["fileName"])
             payload = {'action': 'download', 'hash': f_hash, 'language': 'en'}
             response = requests.get(self.base_url, headers=self.header, params=payload)
@@ -67,5 +66,3 @@ class Downloader():
                 print("Done!\n")
             else:
                 file["status"] = "NaN"
-                print('\nThere\'s unfortunately no subtitle'
-                        ' for this file at the moment\n')
