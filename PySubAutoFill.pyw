@@ -20,26 +20,31 @@ class SubDownload(Frame):
 
     def create_widgets(self):
         """create widgets (saves __init__ from becoming overly long)"""
+        # Create & place labels
         self.title_label = ttk.Label(text='Subtitle downloader').grid(column=2, row=1, sticky=S, pady=5)
+        self.status_label = Label(root, textvariable=self.status).grid(column=2, row=4, sticky=S)
 
-        self.download_button = ttk.Button(root, text='Download subs',
-                                          command=self.download_subs).grid(column=2, row=3, sticky=E)
+        # Create & place buttons
         self.choose_dir = ttk.Button(root, text='Choose folder',
                                      command=self.load_files).grid(column=2, row=3, sticky=W)
+        self.download_button = ttk.Button(root, text='Download subs',
+                                          command=self.download_subs).grid(column=2, row=3, sticky=E)
 
-        self.canvas = Canvas(root, borderwidth=0, background="#eeeeee", width=600, height=400)
+        # Crate canvas, file_frame and vertical scrollbar (subtitle area)
+        self.canvas = Canvas(root, borderwidth=0, background="#f0f0f0", width=600, height=400)
         self.file_frame = Frame(self.canvas)
         self.vsb = Scrollbar(root, orient="vertical", command=self.canvas.yview)
         self.canvas.configure(yscrollcommand=self.vsb.set)
 
+        # Place vertical scrollbar, canvas and create windows
         self.vsb.grid(column=4, row=2, rowspan=1, padx=(0,5), sticky=N+S+W)
         self.canvas.grid(column=1, row=2, columnspan=3, padx=(15,0), pady=(0,10))
         self.canvas.create_window((4,4), window=self.file_frame, anchor="nw",
                                   tags="self.file_frame")
+        # Bind scrolling
         self.file_frame.bind("<Configure>", self.onFrameConfigure)
         self.file_frame.bind('<Enter>', self._bound_to_mousewheel)
         self.file_frame.bind('<Leave>', self._unbound_to_mousewheel)
-        self.status_label = Label(root, textvariable=self.status).grid(column=2, row=4, sticky=S)
 
     def load_files(self):
         """Prompt for directory, load files and populate gui"""
@@ -107,16 +112,8 @@ class SubDownload(Frame):
     def _on_mousewheel(self, event):
         self.canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
 
-
-
 root = Tk()
 root.title('Subtitle downloader')
-
-
-mainframe = ttk.Frame(root, padding='3 3 12 12')
-mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
-mainframe.columnconfigure(0, weight=1)
-mainframe.rowconfigure(0, weight=1)
 
 app = SubDownload(master=root)
 app.mainloop()
