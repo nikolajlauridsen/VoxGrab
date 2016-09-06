@@ -30,6 +30,13 @@ from downloader import Downloader
 import os
 import re
 
+colors = {
+    "azure": "#007fff",
+    "green": "#3fff00",
+    "red": "#e62020",
+    "yellow": "#ffc40c"
+}
+
 
 class SubDownload(Frame):
 
@@ -79,7 +86,10 @@ class SubDownload(Frame):
             self.directory = filedialog.askdirectory()
             self.files = self.sort_files(os.listdir(path=self.directory))
             self.populate()
-            self.status.set("Click download")
+            if len(self.files) > 0:
+                self.status.set("Click download")
+            else:
+                self.status.set("No media in folder")
         except FileNotFoundError:
             self.status.set("That's not a folder")
 
@@ -97,7 +107,7 @@ class SubDownload(Frame):
                   borderwidth="1", relief="solid").grid(row=i, column=0)
 
             Label(self.file_frame, text=file["status"], width="14", borderwidth="1",
-                  relief="solid").grid(row=i, column=1)
+                  relief="solid", bg=file["color"]).grid(row=i, column=1)
             file["row"] = i
 
     def sort_files(self, files):
@@ -107,7 +117,8 @@ class SubDownload(Frame):
             media_re = re.search(r"^[\s\S]*?\.(mp4|avi|mkv|m4v)$", file)
             if media_re:
                 context = {"fileName": file,
-                           "status": "Waiting"}
+                           "status": "Waiting",
+                           "color": colors["azure"]}
                 media_files.append(context)
             else:
                 pass
@@ -121,7 +132,7 @@ class SubDownload(Frame):
         for file in self.files:
             dl.download_file(file)
             Label(self.file_frame, text=file["status"], width="14", borderwidth="1",
-                  relief="solid").grid(row = file["row"], column=1)
+                  relief="solid", bg=file["color"]).grid(row=file["row"], column=1)
             root.update()
         self.status.set('Done Downloading subtitles.')
 

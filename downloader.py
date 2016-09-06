@@ -25,6 +25,12 @@ import requests
 import hashlib
 import os
 
+colors = {
+    "azure": "#007fff",
+    "green": "#3fff00",
+    "red": "#e62020",
+    "yellow": "#ffc40c"
+}
 
 def get_hash(name):
     """Generate and return hash for a file"""
@@ -66,7 +72,10 @@ class Downloader():
                             subtitle.write(chunk)
                         subtitle.close
                     file["status"] = "Succeeded"
+                    file["color"] = colors["green"]
                 except:
                     file["status"] = "Failed"
+                    file["color"] = colors["red"]
             else:
                 file["status"] = "NaN"
+                file["color"] = colors["yellow"]
