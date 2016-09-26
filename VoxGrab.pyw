@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
@@ -42,13 +43,13 @@ colors = {
 class SubDownload(Frame):
 
     def __init__(self, master=None):
-        Frame.__init__(self, master)
+        Frame.__init__(self, master)  # Inherit from frame
         self.directory = 'Please choose a directory'
         self.files = []
         self.status = StringVar()
-        self.check_flag = IntVar()  # 1 for True 0 for false
-        self.check_flag.set(1)      # Set default state to true
         self.status.set("Please choose a folder")
+        self.check_flag = IntVar()    # 1 for True 0 for false
+        self.check_flag.set(1)        # Set default state to true
         self.create_widgets()
 
     def create_widgets(self):
@@ -70,8 +71,8 @@ class SubDownload(Frame):
         self.file_frame = Frame(self.canvas)
         self.vsb = Scrollbar(root, orient="vertical", command=self.canvas.yview)
         self.canvas.configure(yscrollcommand=self.vsb.set)
-        # Add title labels
-        Label(self.file_frame, text="Files", width="70",
+        # Add title labels for columns
+        Label(self.file_frame, text="File name", width="70",
               borderwidth="1", relief="solid").grid(row=0, column=0)
         Label(self.file_frame, text="Status", width="14",
               borderwidth="1", relief="solid").grid(row=0, column=1)
@@ -107,6 +108,12 @@ class SubDownload(Frame):
     def populate(self):
         """Populate/refresh file_frame"""
         self.clear_download_frame()
+
+        # Re-create title labels for columns
+        Label(self.file_frame, text="File name", width="70",
+              borderwidth="1", relief="solid").grid(row=0, column=0)
+        Label(self.file_frame, text="Status", width="14",
+              borderwidth="1", relief="solid").grid(row=0, column=1)
 
         for i, file in enumerate(self.files):
             Label(self.file_frame, text=file["fileName"], width=70,
