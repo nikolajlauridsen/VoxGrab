@@ -29,8 +29,10 @@ colors = {
     "azure": "#007fff",
     "green": "#3fff00",
     "red": "#e62020",
-    "yellow": "#ffc40c"
+    "yellow": "#ffc40c",
+    "d-green": "#177245"
 }
+
 
 def get_hash(name):
     """Generate and return hash for a file"""
@@ -49,7 +51,7 @@ class Downloader():
     def __init__(self, directory, check_flag):
         self.base_url = 'http://api.thesubdb.com/'
         self.user_agent = 'SubDB/1.0 (VoxGrab/1.0;' \
-                          ' https://github.com/nikolajlauridsen/PySubDBAutoFill'
+                          ' https://github.com/nikolajlauridsen/VoxGrab'
         self.header = {'User-Agent': self.user_agent}
         self.directory = directory
         self.check_flag = check_flag
@@ -60,6 +62,7 @@ class Downloader():
         file_path = file["fileName"][:-4] + '.srt'
         if os.path.isfile(file_path) and self.check_flag == 1:
             file["status"] = "Skipped"
+            file["color"] = colors["d-green"]
 
         else:
             f_hash = get_hash(file["fileName"])
