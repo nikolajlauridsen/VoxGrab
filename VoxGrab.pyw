@@ -127,15 +127,18 @@ class SubDownload(Frame):
 
     def download_subs(self):
         """Attempt to download subs to all files in self.files and set status label"""
-        self.status.set('Downloading subtitles.')
-        root.update()
-        dl = Downloader(self.directory, self.check_flag.get())
-        for file in self.files:
-            dl.download_file(file)
-            Label(self.file_frame, text=file["status"], width="14", borderwidth="1",
-                  relief="solid", bg=file["color"]).grid(row=file["row"], column=1)
+        if len(self.files) > 0:
+            self.status.set('Downloading subtitles.')
             root.update()
-        self.status.set('Done Downloading subtitles.')
+            dl = Downloader(self.directory, self.check_flag.get())
+            for file in self.files:
+                dl.download_file(file)
+                Label(self.file_frame, text=file["status"], width="14", borderwidth="1",
+                      relief="solid", bg=file["color"]).grid(row=file["row"], column=1)
+                root.update()
+            self.status.set('Done Downloading subtitles.')
+        else:
+            self.status.set('No subtitles to download')
 
     def onFrameConfigure(self, event):
         """Reset the scroll region to encompass the inner file_frame"""
