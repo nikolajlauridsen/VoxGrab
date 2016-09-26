@@ -70,6 +70,11 @@ class SubDownload(Frame):
         self.file_frame = Frame(self.canvas)
         self.vsb = Scrollbar(root, orient="vertical", command=self.canvas.yview)
         self.canvas.configure(yscrollcommand=self.vsb.set)
+        # Add title labels
+        Label(self.file_frame, text="Files", width="70",
+              borderwidth="1", relief="solid").grid(row=0, column=0)
+        Label(self.file_frame, text="Status", width="14",
+              borderwidth="1", relief="solid").grid(row=0, column=1)
 
         # Place vertical scrollbar, canvas and create windows
         self.vsb.grid(column=4, row=2, rowspan=1, padx=(0,5), sticky=N+S+W)
@@ -105,11 +110,11 @@ class SubDownload(Frame):
 
         for i, file in enumerate(self.files):
             Label(self.file_frame, text=file["fileName"], width=70,
-                  borderwidth="1", relief="solid").grid(row=i, column=0)
+                  borderwidth="1", relief="solid").grid(row=i+1, column=0)
 
             Label(self.file_frame, text=file["status"], width="14", borderwidth="1",
-                  relief="solid", bg=file["color"]).grid(row=i, column=1)
-            file["row"] = i
+                  relief="solid", bg=file["color"]).grid(row=i+1, column=1)
+            file["row"] = i+1
 
     def sort_files(self, files):
         """Sort out non media files"""
