@@ -44,7 +44,7 @@ class SubDownload(Frame):
 
     def __init__(self, master=None):
         Frame.__init__(self, master)  # Inherit from frame
-        self.directory = 'Please choose a directory'
+        self.directory = StringVar()
         self.files = []
         self.status = StringVar()
         self.status.set("Please choose a folder")
@@ -56,15 +56,20 @@ class SubDownload(Frame):
         """create widgets (saves __init__ from becoming overly long)"""
         # Create & place labels
         self.title_label = ttk.Label(text='Subtitle downloader').grid(column=2, row=1, sticky=W, pady=5)
-        self.status_label = Label(root, textvariable=self.status).grid(column=2, row=4, sticky=W)
+        self.status_label = Label(root, textvariable=self.status).grid(column=2, row=5, stick=W)
 
         # Create & place buttons
         self.choose_dir = ttk.Button(root, text='Choose folder',
-                                     command=self.load_files).grid(column=2, row=3, sticky=W, pady=5)
+                                     command=self.prompt_directory).grid(column=2, row=4, sticky=E, pady=5)
         self.download_button = ttk.Button(root, text='Download subs',
-                                          command=self.download_subs).grid(column=2, row=3, sticky=E)
+                                          command=self.download_subs).grid(column=2, row=4, sticky=W)
         self.file_Checkbutton = Checkbutton(root, text="Skip downloaded subs",
-                                            variable=self.check_flag, justify=LEFT).grid(column=1, row=3, sticky=W+E)
+                                            variable=self.check_flag, justify=LEFT).grid(column=1, row=4, sticky=W+E)
+        self.load_directory_button = ttk.Button(root, text='Load files',
+                                                command=self.load_files).grid(column=2, row=3, sticky=W)
+
+        self.folder_select = Entry(root, width=50, textvariable=self.directory)\
+            .grid(column=1, row=3)
 
         # Crate canvas, file_frame and vertical scrollbar (subtitle area)
         self.canvas = Canvas(root, borderwidth=0, background="#f0f0f0", width=600, height=400)
@@ -86,15 +91,19 @@ class SubDownload(Frame):
         self.file_frame.bind("<Configure>", self.onFrameConfigure)
         self.file_frame.bind('<Enter>', self._bound_to_mousewheel)
         self.file_frame.bind('<Leave>', self._unbound_to_mousewheel)
+        root.bind('<Return>', self.load_files)
 
-    def load_files(self):
+    def prompt_directory(self):
         """Prompt for directory, load files and populate gui"""
+        self.directory.set(filedialog.askdirectory())
+        self.load_files()
+
+    def load_files(self, *args):
         try:
-            self.directory = filedialog.askdirectory()
-            self.files = self.sort_files(os.listdir(path=self.directory))
+            self.files = self.sort_files(os.listdir(path=self.directory.get()))
             self.populate()
             if len(self.files) > 0:
-                self.status.set("Click download")
+                self.status.set("Click Download")
             else:
                 self.status.set("No media in folder")
         except FileNotFoundError:
@@ -142,7 +151,7 @@ class SubDownload(Frame):
         if len(self.files) > 0:
             self.status.set('Downloading subtitles.')
             root.update()
-            dl = Downloader(self.directory, self.check_flag.get())
+            dl = Downloader(self.directory.get(), self.check_flag.get())
             for file in self.files:
                 dl.download_file(file)
                 Label(self.file_frame, text=file["status"], width="14", borderwidth="1",
