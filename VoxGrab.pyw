@@ -1,27 +1,3 @@
-"""
-MIT License
-
-Copyright (c) [2016] [Nikolaj Lauridsen]
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-"""
-
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
@@ -39,59 +15,101 @@ colors = {
     "d-green": "#177245"
 }
 
-
-class SubDownload(Frame):
+class SubDownloader(Frame):
 
     def __init__(self, master=None):
-        Frame.__init__(self, master)  # Inherit from frame
+        # Inherit from frame
+        Frame.__init__(self, master)
+        self.master = master
+
+        # String vars
         self.directory = StringVar()
-        self.files = []
         self.status = StringVar()
         self.status.set("Please choose a folder")
-        self.check_flag = IntVar()    # 1 for True 0 for false
-        self.check_flag.set(1)        # Set default state to true
+
+        # Pseudo booleans
+        self.check_flag = IntVar()
+        self.check_flag.set(1)
+
+        # Lists
+        self.files = []
+
+        # Create widgets
         self.create_widgets()
 
     def create_widgets(self):
-        """create widgets (saves __init__ from becoming overly long)"""
-        # Create & place labels
-        self.title_label = ttk.Label(text='Subtitle downloader').grid(column=2, row=1, sticky=W, pady=5)
-        self.status_label = Label(root, textvariable=self.status).grid(column=2, row=5, stick=W)
+        """Create widgets, saves init from becoming ridiculous"""
 
-        # Create & place buttons
-        self.choose_dir = ttk.Button(root, text='Choose folder',
-                                     command=self.prompt_directory).grid(column=2, row=4, sticky=E, pady=5)
-        self.download_button = ttk.Button(root, text='Download subs',
-                                          command=self.download_subs).grid(column=2, row=4, sticky=W)
-        self.file_Checkbutton = Checkbutton(root, text="Skip downloaded subs",
-                                            variable=self.check_flag, justify=LEFT).grid(column=1, row=4, sticky=W+E)
-        self.load_directory_button = ttk.Button(root, text='Load files',
-                                                command=self.load_files).grid(column=2, row=3, sticky=W)
+        # Create labels
+        title_label = Label(self.master, text='VoxGrab\n subtitle downloader', font=16)
+        self.status_label = Label(self.master, textvariable=self.status)
 
-        self.folder_select = Entry(root, width=50, textvariable=self.directory)\
-            .grid(column=1, row=3)
+        # Create folder text input frame
+        folder_fame = Frame(self.master)
+        folder_string = Entry(folder_fame, width=75,
+                              textvariable=self.directory).grid(column=0, row=1, padx=0, sticky=W)
+        load_dir_button = ttk.Button(folder_fame, text='Load files',
+                                     command=self.load_files).grid(column=1, row=1, padx=10)
 
-        # Crate canvas, file_frame and vertical scrollbar (subtitle area)
-        self.canvas = Canvas(root, borderwidth=0, background="#f0f0f0", width=600, height=400)
+        # Create scrolling area and scroll bar
+        self.file_area = Frame(self.master)
+        self.canvas = Canvas(self.file_area, borderwidth=0, background='#f0f0f0',
+                             width=600, height=400)
         self.file_frame = Frame(self.canvas)
-        self.vsb = Scrollbar(root, orient="vertical", command=self.canvas.yview)
-        self.canvas.configure(yscrollcommand=self.vsb.set)
+        scrollbar = Scrollbar(self.file_area, orient='vertical',
+                              command=self.canvas.yview)
+
         # Add title labels for columns
         Label(self.file_frame, text="File name", width="70",
               borderwidth="1", relief="solid").grid(row=0, column=0)
         Label(self.file_frame, text="Status", width="14",
               borderwidth="1", relief="solid").grid(row=0, column=1)
 
-        # Place vertical scrollbar, canvas and create windows
-        self.vsb.grid(column=4, row=2, rowspan=1, padx=(0,5), sticky=N+S+W)
-        self.canvas.grid(column=1, row=2, columnspan=3, padx=(15,0), pady=(0,10))
-        self.canvas.create_window((4,4), window=self.file_frame, anchor="nw",
-                                  tags="self.file_frame")
+        # Configure, create & pack
+        self.canvas.configure(yscrollcommand=scrollbar.set)
+        self.canvas.create_window((4, 4), window=self.file_frame,
+                                  anchor="nw", tags="self.file_frame")
+        self.canvas.pack(side=LEFT)
+        scrollbar.pack(side=RIGHT, fill=Y)
+
+        # Create button pane
+        button_pane = Frame(self.master)
+
+        check_files = Checkbutton(button_pane, text='Skip downloaded subs',
+                                  variable=self.check_flag, justify=LEFT).grid(column=1, row=1, padx=100)
+        choose_dir = ttk.Button(button_pane, text='Choose folder',
+                                command=self.prompt_directory).grid(column=2, row=1, padx=10)
+        download_button = ttk.Button(button_pane, text="Download subs",
+                                     command=self.download_subs).grid(column=3, row=1, padx=10)
+
+
+        # Pack it all
+        title_label.pack(pady=5)
+        self.file_area.pack(padx=15, pady=5)
+        folder_fame.pack(padx=5, pady=5)
+        button_pane.pack(pady=5)
+        self.status_label.pack(padx=5, pady=5)
         # Bind scrolling
         self.file_frame.bind("<Configure>", self.onFrameConfigure)
         self.file_frame.bind('<Enter>', self._bound_to_mousewheel)
         self.file_frame.bind('<Leave>', self._unbound_to_mousewheel)
-        root.bind('<Return>', self.load_files)
+        self.master.bind('<Return>', self.load_files)
+
+    def onFrameConfigure(self, event):
+        """Reset the scroll region to encompass the inner file_frame"""
+        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+
+    def _bound_to_mousewheel(self, event):
+        """Bind mousewheel to scroll function"""
+        self.canvas.bind_all("<MouseWheel>", self._on_mousewheel)
+
+    def _unbound_to_mousewheel(self, event):
+        """Unbind mousewheel"""
+        self.canvas.unbind_all("<MouseWheel>")
+
+    def _on_mousewheel(self, event):
+        """Scrolling function"""
+        self.canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
 
     def prompt_directory(self):
         """Prompt for directory, load files and populate gui"""
@@ -150,35 +168,20 @@ class SubDownload(Frame):
         """Attempt to download subs to all files in self.files and set status label"""
         if len(self.files) > 0:
             self.status.set('Downloading subtitles.')
-            root.update()
+            self.master.update()
             dl = Downloader(self.directory.get(), self.check_flag.get())
             for file in self.files:
                 dl.download_file(file)
                 Label(self.file_frame, text=file["status"], width="14", borderwidth="1",
                       relief="solid", bg=file["color"]).grid(row=file["row"], column=1)
-                root.update()
+                self.master.update()
             self.status.set('Done Downloading subtitles.')
         else:
             self.status.set('No subtitles to download')
 
-    def onFrameConfigure(self, event):
-        """Reset the scroll region to encompass the inner file_frame"""
-        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
-
-    def _bound_to_mousewheel(self, event):
-        """Bind mousewheel to scroll function"""
-        self.canvas.bind_all("<MouseWheel>", self._on_mousewheel)
-
-    def _unbound_to_mousewheel(self, event):
-        """Unbind mousewheel"""
-        self.canvas.unbind_all("<MouseWheel>")
-
-    def _on_mousewheel(self, event):
-        """Scrolling function"""
-        self.canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
 
 root = Tk()
 root.title('VoxGrab')
 
-app = SubDownload(master=root)
+app = SubDownloader(master=root)
 app.mainloop()

@@ -80,5 +80,5 @@ class Downloader():
                     file["status"] = "Failed"
                     file["color"] = colors["red"]
             else:
-                file["status"] = "NaN"
+                file["status"] = "N/A"
                 file["color"] = colors["yellow"]
