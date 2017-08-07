@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) [2016] [Nikolaj Lauridsen]
+Copyright (c) 2016-2017 Nikolaj Lauridsen
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -38,6 +38,7 @@ colors = {
     "d-green": "#177245"
 }
 
+
 class SubDownloader(Frame):
 
     def __init__(self, master=None):
@@ -54,31 +55,33 @@ class SubDownloader(Frame):
         self.check_flag = IntVar()
         self.check_flag.set(1)
 
-        # Lists
         self.files = []
 
         # Create widgets
+        # The "important" widgets needed later
+        self.status_label = Label(self.master, textvariable=self.status)
+        self.file_area = Frame(self.master)
+
+        self.canvas = Canvas(self.file_area, borderwidth=0,
+                             background='#f0f0f0',
+                             width=600, height=400)
+        self.file_frame = Frame(self.canvas)
+
         self.create_widgets()
 
     def create_widgets(self):
         """Create widgets, saves init from becoming ridiculous"""
-
         # Create labels
         title_label = Label(self.master, text='VoxGrab\n subtitle downloader', font=16)
-        self.status_label = Label(self.master, textvariable=self.status)
 
         # Create folder text input frame
         folder_fame = Frame(self.master)
-        folder_string = Entry(folder_fame, width=75,
-                              textvariable=self.directory).grid(column=0, row=1, padx=0, sticky=W)
-        load_dir_button = ttk.Button(folder_fame, text='Load files',
-                                     command=self.load_files).grid(column=1, row=1, padx=10)
+        Entry(folder_fame, width=75,
+              textvariable=self.directory).grid(column=0, row=1, padx=0, sticky=W)
+        ttk.Button(folder_fame, text='Load files',
+                   command=self.load_files).grid(column=1, row=1, padx=10)
 
         # Create scrolling area and scroll bar
-        self.file_area = Frame(self.master)
-        self.canvas = Canvas(self.file_area, borderwidth=0, background='#f0f0f0',
-                             width=600, height=400)
-        self.file_frame = Frame(self.canvas)
         scrollbar = Scrollbar(self.file_area, orient='vertical',
                               command=self.canvas.yview)
 
@@ -98,13 +101,12 @@ class SubDownloader(Frame):
         # Create button pane
         button_pane = Frame(self.master)
 
-        check_files = Checkbutton(button_pane, text='Skip downloaded subs',
-                                  variable=self.check_flag, justify=LEFT).grid(column=1, row=1, padx=100)
-        choose_dir = ttk.Button(button_pane, text='Choose folder',
-                                command=self.prompt_directory).grid(column=2, row=1, padx=10)
-        download_button = ttk.Button(button_pane, text="Download subs",
-                                     command=self.download_subs).grid(column=3, row=1, padx=10)
-
+        Checkbutton(button_pane, text='Skip downloaded subs',
+                    variable=self.check_flag, justify=LEFT).grid(column=1, row=1, padx=100)
+        ttk.Button(button_pane, text='Choose folder',
+                   command=self.prompt_directory).grid(column=2, row=1, padx=10)
+        ttk.Button(button_pane, text="Download subs",
+                   command=self.download_subs).grid(column=3, row=1, padx=10)
 
         # Pack it all
         title_label.pack(pady=5)
@@ -173,7 +175,8 @@ class SubDownloader(Frame):
                   relief="solid", bg=file["color"]).grid(row=i+1, column=1)
             file["row"] = i+1
 
-    def sort_files(self, files):
+    @staticmethod
+    def sort_files(files):
         """Sort out non media files"""
         media_files = []
         for file in files:
@@ -188,15 +191,26 @@ class SubDownloader(Frame):
         return media_files
 
     def download_subs(self):
-        """Attempt to download subs to all files in self.files and set status label"""
+        """
+        Attempt to download subs to all files in self.files
+        and set status label
+        """
         if len(self.files) > 0:
             self.status.set('Downloading subtitles.')
             self.master.update()
             dl = Downloader(self.directory.get(), self.check_flag.get())
             for file in self.files:
                 dl.download_file(file)
-                Label(self.file_frame, text=file["status"], width="14", borderwidth="1",
-                      relief="solid", bg=file["color"]).grid(row=file["row"], column=1)
+
+                label_config = {
+                    'text': file['status'],
+                    'width': 14,
+                    'borderwidth': '1',
+                    'relief': 'solid',
+                    'bg': file['color']
+                }
+                Label(self.file_frame, **label_config).grid(row=file["row"],
+                                                            column=1)
                 self.master.update()
             self.status.set('Done Downloading subtitles.')
         else:

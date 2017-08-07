@@ -34,51 +34,53 @@ colors = {
 }
 
 
-def get_hash(name):
-    """Generate and return hash for a file"""
-    readsize = 64 * 1024
-    with open(name, 'rb') as f:
-        size = os.path.getsize(name)
-        data = f.read(readsize)
-        f.seek(-readsize, os.SEEK_END)
-        data += f.read(readsize)
-    return hashlib.md5(data).hexdigest()
-
-
-class Downloader():
+class Downloader:
     """Class handling interaction with thesubdb api"""
 
     def __init__(self, directory, check_flag):
-        self.base_url = 'http://api.thesubdb.com/'
+        self.base_url = 'http://sandbox.thesubdb.com'
         self.user_agent = 'SubDB/1.0 (VoxGrab/1.0;' \
                           ' https://github.com/nikolajlauridsen/VoxGrab'
         self.header = {'User-Agent': self.user_agent}
         self.directory = directory
         self.check_flag = check_flag
 
-    def download_file(self, file):
+    @staticmethod
+    def get_hash(name):
+        """Generate and return hash for a file"""
+        readsize = 64 * 1024
+        with open(name, 'rb') as f:
+            size = os.path.getsize(name)
+            data = f.read(readsize)
+            f.seek(-readsize, os.SEEK_END)
+            data += f.read(readsize)
+        return hashlib.md5(data).hexdigest()
+
+    def download_file(self, file_model):
         """Request subtitle from thesubdb api and return true/false"""
         os.chdir(self.directory)
-        file_path = file["fileName"][:-4] + '.srt'
+        file_path = file_model["fileName"][:-4] + '.ENG' + '.srt'
         if os.path.isfile(file_path) and self.check_flag == 1:
-            file["status"] = "Skipped"
-            file["color"] = colors["d-green"]
+            file_model["status"] = "Skipped"
+            file_model["color"] = colors["d-green"]
 
         else:
-            f_hash = get_hash(file["fileName"])
+            f_hash = self.get_hash(file_model["fileName"])
             payload = {'action': 'download', 'hash': f_hash, 'language': 'en'}
-            response = requests.get(self.base_url, headers=self.header, params=payload)
+            response = requests.get(self.base_url, headers=self.header,
+                                    params=payload)
+
             if response.status_code == 200:
                 try:
-                    with open(file["fileName"][:-4] + '.srt', 'wb') as subtitle:
+                    with open(file_path, 'wb') as subtitle:
                         for chunk in response.iter_content(4096):
                             subtitle.write(chunk)
-                        subtitle.close
-                    file["status"] = "Succeeded"
-                    file["color"] = colors["green"]
+                    file_model["status"] = "Succeeded"
+                    file_model["color"] = colors["green"]
                 except:
-                    file["status"] = "Failed"
-                    file["color"] = colors["red"]
+                    file_model["status"] = "Failed"
+                    file_model["color"] = colors["red"]
             else:
-                file["status"] = "N/A"
-                file["color"] = colors["yellow"]
+                file_model["status"] = "N/A"
+                file_model["color"] = colors["yellow"]
+
