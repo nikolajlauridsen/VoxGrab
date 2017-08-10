@@ -63,14 +63,17 @@ class SubDownloader(Frame):
         # Create widgets
         # The "important" widgets needed later
         self.status_label = Label(self.master, textvariable=self.status)
+        self.progress_bar = ttk.Progressbar(self.master, orient="horizontal",
+                                            mode="determinate", length=620)
+
         self.file_area = Frame(self.master)
+        self.folder_fame = Frame(self.master)
+        self.button_frame = Frame(self.master)
 
         self.canvas = Canvas(self.file_area, borderwidth=0,
                              background='#f0f0f0',
                              width=600, height=400)
         self.file_frame = Frame(self.canvas)
-        self.progress_bar = ttk.Progressbar(self.master, orient="horizontal",
-                                            mode="determinate", length=620)
 
         self.create_widgets()
 
@@ -81,10 +84,9 @@ class SubDownloader(Frame):
                             font=16)
 
         # Create folder text input frame
-        folder_fame = Frame(self.master)
-        Entry(folder_fame, width=80,
+        Entry(self.folder_fame, width=80,
               textvariable=self.directory).grid(column=0, row=1, padx=0, sticky=W)
-        ttk.Button(folder_fame, text='Load files',
+        ttk.Button(self.folder_fame, text='Load files',
                    command=self.load_files).grid(column=1, row=1, padx=10)
 
         # Create scrolling area and scroll bar
@@ -105,13 +107,11 @@ class SubDownloader(Frame):
         scrollbar.pack(side=RIGHT, fill=Y)
 
         # Create button pane
-        button_pane = Frame(self.master)
-
-        Checkbutton(button_pane, text='Skip downloaded subs',
+        Checkbutton(self.button_frame, text='Skip downloaded subs',
                     variable=self.check_flag, justify=LEFT).grid(column=1, row=1, padx=100)
-        ttk.Button(button_pane, text='Choose folder',
+        ttk.Button(self.button_frame, text='Choose folder',
                    command=self.prompt_directory).grid(column=2, row=1, padx=10)
-        ttk.Button(button_pane, text="Download subs",
+        ttk.Button(self.button_frame, text="Download subs",
                    command=self.download_subs).grid(column=3, row=1, padx=10)
 
         # Pack it all
@@ -119,8 +119,8 @@ class SubDownloader(Frame):
         self.file_area.pack(padx=15, pady=5)
         self.progress_bar.pack()
         self.status_label.pack(pady=5)
-        folder_fame.pack(pady=5)
-        button_pane.pack(pady=5)
+        self.folder_fame.pack(pady=5)
+        self.button_frame.pack(pady=5)
         # Bind scrolling
         self.file_frame.bind("<Configure>", self.onFrameConfigure)
         self.file_frame.bind('<Enter>', self._bound_to_mousewheel)
@@ -228,6 +228,10 @@ class SubDownloader(Frame):
         # Prepare the GUI
         self.progress_bar.configure(maximum=len(self.files))
         self.status.set('Downloading subtitles.')
+        for child in (self.folder_fame.winfo_children() +
+                      self.button_frame.winfo_children()):
+            child.configure(state=DISABLED)
+
         # Start threads
         for n in range(min(10, len(self.files))):
             thread = threading.Thread(target=self._worker,
@@ -240,6 +244,9 @@ class SubDownloader(Frame):
             thread.join()
 
         # Update GUI
+        for child in (self.folder_fame.winfo_children() +
+                      self.button_frame.winfo_children()):
+            child.configure(state=NORMAL)
         self.status.set('Done!')
 
     def _worker(self, downloader):
