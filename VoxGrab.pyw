@@ -25,7 +25,7 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
 
-from downloader import Downloader
+from subtitledownloader import SubtitleDownloader
 
 import os
 import re
@@ -204,18 +204,47 @@ class SubDownloader(Frame):
 
             # Prepare downloader
             os.chdir(self.directory.get())
-            downloader = Downloader(self.check_flag.get())
+            downloader = SubtitleDownloader(self.check_flag.get())
             for _file in self.files:
                 self.queue.put(_file)
+            parent_thread = threading.Thread(target=self._parent,
+                                             args=(downloader, ))
+            parent_thread.start()
 
-            for n in range(min(10, len(self.files))):
-                thread = threading.Thread(target=self._worker,
-                                          args=(downloader, ))
-                thread.start()
         else:
             self.status.set('No subtitles to download')
 
+    def _parent(self, downloader):
+        """
+        Parent thread for maneging workers.
+        Allows for the UI to be update once the download is completed
+        without blocking the GUI thread
+        :param downloader: SubtitleDownloader to be handed over to workers
+        :return: None
+        """
+        threads = []
+
+        # Start threads
+        for n in range(min(10, len(self.files))):
+            thread = threading.Thread(target=self._worker,
+                                      args=(downloader,))
+            thread.start()
+            threads.append(thread)
+
+        # Wait for them to finish
+        for thread in threads:
+            thread.join()
+
+        # Update GUI
+        self.status.set('Done!')
+
     def _worker(self, downloader):
+        """
+        Worker thread downloading subtitles
+        also updates the file_frame labels and progress bar
+        :param downloader: SubtitleDownloader for API interaction
+        :return: None
+        """
         while True:
             # Get a move file from queue
             try:

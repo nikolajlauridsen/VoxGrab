@@ -34,7 +34,7 @@ colors = {
 }
 
 
-class Downloader:
+class SubtitleDownloader:
     """Class handling interaction with thesubdb api"""
 
     def __init__(self, check_flag):
