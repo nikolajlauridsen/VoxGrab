@@ -1,11 +1,21 @@
+# Various folders
 build
-venv
+include
 .idea
+
+# Venvs
+venv
+env
+
+# Python folders
 __pycache__
+
 # Media files and subtitles for testing
 *.mp4
 *.srt
+
 # Quick and dirty tests
 *_test.py
+
 # Lazy windows scripts
 *.bat
