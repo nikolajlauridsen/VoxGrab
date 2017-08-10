@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) [2016] [Nikolaj Lauridsen]
+Copyright (c) 2016-17 Nikolaj Lauridsen
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -37,12 +37,12 @@ colors = {
 class Downloader:
     """Class handling interaction with thesubdb api"""
 
-    def __init__(self, directory, check_flag):
+    def __init__(self, check_flag):
+        # TODO: Change link
         self.base_url = 'http://sandbox.thesubdb.com'
         self.user_agent = 'SubDB/1.0 (VoxGrab/1.0;' \
                           ' https://github.com/nikolajlauridsen/VoxGrab'
         self.header = {'User-Agent': self.user_agent}
-        self.directory = directory
         self.check_flag = check_flag
 
     @staticmethod
@@ -56,9 +56,8 @@ class Downloader:
             data += f.read(readsize)
         return hashlib.md5(data).hexdigest()
 
-    def download_file(self, file_model):
+    def download_sub(self, file_model):
         """Request subtitle from thesubdb api and return true/false"""
-        os.chdir(self.directory)
         file_path = file_model["fileName"][:-4] + '.ENG' + '.srt'
         if os.path.isfile(file_path) and self.check_flag == 1:
             file_model["status"] = "Skipped"

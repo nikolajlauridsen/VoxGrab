@@ -29,6 +29,8 @@ from downloader import Downloader
 
 import os
 import re
+import queue
+import threading
 
 colors = {
     "azure": "#007fff",
@@ -45,6 +47,7 @@ class SubDownloader(Frame):
         # Inherit from frame
         Frame.__init__(self, master)
         self.master = master
+        self.queue = queue.Queue()
 
         # String vars
         self.directory = StringVar()
@@ -72,7 +75,8 @@ class SubDownloader(Frame):
     def create_widgets(self):
         """Create widgets, saves init from becoming ridiculous"""
         # Create labels
-        title_label = Label(self.master, text='VoxGrab\n subtitle downloader', font=16)
+        title_label = Label(self.master, text='VoxGrab\nsubtitle downloader',
+                            font=16)
 
         # Create folder text input frame
         folder_fame = Frame(self.master)
@@ -197,24 +201,40 @@ class SubDownloader(Frame):
         """
         if len(self.files) > 0:
             self.status.set('Downloading subtitles.')
-            self.master.update()
-            dl = Downloader(self.directory.get(), self.check_flag.get())
-            for file in self.files:
-                dl.download_file(file)
 
-                label_config = {
-                    'text': file['status'],
-                    'width': 14,
-                    'borderwidth': '1',
-                    'relief': 'solid',
-                    'bg': file['color']
-                }
-                Label(self.file_frame, **label_config).grid(row=file["row"],
-                                                            column=1)
-                self.master.update()
-            self.status.set('Done Downloading subtitles.')
+            # Prepare downloader
+            os.chdir(self.directory.get())
+            downloader = Downloader(self.check_flag.get())
+            for _file in self.files:
+                self.queue.put(_file)
+
+            for n in range(min(10, len(self.files))):
+                thread = threading.Thread(target=self._worker,
+                                          args=(downloader, ))
+                thread.start()
         else:
             self.status.set('No subtitles to download')
+
+    def _worker(self, downloader):
+        while True:
+            # Get a move file from queue
+            try:
+                _file = self.queue.get(block=False)
+            except queue.Empty:
+                return
+
+            # Download sub
+            downloader.download_sub(_file)
+            # Replace the corresponding label
+            label_config = {
+                'text': _file['status'],
+                'width': 14,
+                'borderwidth': '1',
+                'relief': 'solid',
+                'bg': _file['color']
+            }
+            Label(self.file_frame, **label_config).grid(row=_file["row"],
+                                                        column=1)
 
 
 root = Tk()
