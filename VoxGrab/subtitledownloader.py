@@ -33,7 +33,7 @@ class SubtitleDownloader:
 
     def __init__(self, check_flag):
         self.base_url = 'http://api.thesubdb.com'
-        self.user_agent = 'SubDB/1.0 (VoxGrab/1.0;' \
+        self.user_agent = 'SubDB/1.0 (VoxGrab/1.2;' \
                           ' https://github.com/nikolajlauridsen/VoxGrab'
         self.header = {'User-Agent': self.user_agent}
         self.check_flag = check_flag
