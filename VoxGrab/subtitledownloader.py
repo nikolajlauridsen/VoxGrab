@@ -32,8 +32,7 @@ class SubtitleDownloader:
     """Class handling interaction with thesubdb api"""
 
     def __init__(self, check_flag):
-        # TODO: Change link
-        self.base_url = 'http://sandbox.thesubdb.com'
+        self.base_url = 'http://api.thesubdb.com'
         self.user_agent = 'SubDB/1.0 (VoxGrab/1.0;' \
                           ' https://github.com/nikolajlauridsen/VoxGrab'
         self.header = {'User-Agent': self.user_agent}
@@ -58,7 +57,7 @@ class SubtitleDownloader:
             file_model["color"] = COLORS["d-green"]
 
         else:
-            f_hash = self.get_hash(file_model["fileName"])
+            f_hash = self.get_hash(file_model['fileName'])
             payload = {'action': 'download', 'hash': f_hash, 'language': 'en'}
             response = requests.get(self.base_url, headers=self.header,
                                     params=payload)
