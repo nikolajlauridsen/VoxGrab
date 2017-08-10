@@ -25,23 +25,16 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
 
-from subtitledownloader import SubtitleDownloader
+from VoxGrab.subtitledownloader import SubtitleDownloader
+from VoxGrab import COLORS
 
 import os
 import re
 import queue
 import threading
 
-colors = {
-    "azure": "#007fff",
-    "green": "#3fff00",
-    "red": "#e62020",
-    "yellow": "#ffc40c",
-    "d-green": "#177245"
-}
 
-
-class SubDownloader(Frame):
+class VoxGrab(Frame):
 
     def __init__(self, master=None):
         # Inherit from frame
@@ -71,7 +64,7 @@ class SubDownloader(Frame):
         self.button_frame = Frame(self.master)
 
         self.canvas = Canvas(self.file_area, borderwidth=0,
-                             background='#f0f0f0',
+                             background=COLORS['grey'],
                              width=600, height=400)
         self.file_frame = Frame(self.canvas)
 
@@ -102,7 +95,7 @@ class SubDownloader(Frame):
         # Configure, create & pack
         self.canvas.configure(yscrollcommand=scrollbar.set)
         self.canvas.create_window((4, 4), window=self.file_frame,
-                                  anchor="nw", tags="self.file_frame")
+                                  anchor='nw', tags='self.file_frame')
         self.canvas.pack(side=LEFT)
         scrollbar.pack(side=RIGHT, fill=Y)
 
@@ -191,7 +184,7 @@ class SubDownloader(Frame):
             if media_re:
                 context = {"fileName": file,
                            "status": "Waiting",
-                           "color": colors["azure"]}
+                           "color": COLORS["azure"]}
                 media_files.append(context)
             else:
                 pass
@@ -276,10 +269,3 @@ class SubDownloader(Frame):
             Label(self.file_frame, **label_config).grid(row=_file["row"],
                                                         column=1)
             self.progress_bar.step()
-
-
-root = Tk()
-root.title('VoxGrab')
-
-app = SubDownloader(master=root)
-app.mainloop()

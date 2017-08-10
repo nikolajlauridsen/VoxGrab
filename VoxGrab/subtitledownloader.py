@@ -25,13 +25,7 @@ import requests
 import hashlib
 import os
 
-colors = {
-    "azure": "#007fff",
-    "green": "#3fff00",
-    "red": "#e62020",
-    "yellow": "#ffc40c",
-    "d-green": "#177245"
-}
+from VoxGrab import COLORS
 
 
 class SubtitleDownloader:
@@ -61,7 +55,7 @@ class SubtitleDownloader:
         file_path = file_model["fileName"][:-4] + '.ENG' + '.srt'
         if os.path.isfile(file_path) and self.check_flag == 1:
             file_model["status"] = "Skipped"
-            file_model["color"] = colors["d-green"]
+            file_model["color"] = COLORS["d-green"]
 
         else:
             f_hash = self.get_hash(file_model["fileName"])
@@ -75,11 +69,11 @@ class SubtitleDownloader:
                         for chunk in response.iter_content(4096):
                             subtitle.write(chunk)
                     file_model["status"] = "Succeeded"
-                    file_model["color"] = colors["green"]
+                    file_model["color"] = COLORS["green"]
                 except:
                     file_model["status"] = "Failed"
-                    file_model["color"] = colors["red"]
+                    file_model["color"] = COLORS["red"]
             else:
                 file_model["status"] = "N/A"
-                file_model["color"] = colors["yellow"]
+                file_model["color"] = COLORS["yellow"]
 
