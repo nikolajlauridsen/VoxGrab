@@ -2,7 +2,7 @@
 Subtitles the easy way, as served by [TheSubDB](http://thesubdb.com/)
 
 (I'm not affiliated with TheSubDB in any way shape or form other than using their service.)
-![VoxGrab](screenshot.PNG)
+<center>![VoxGrab](screenshot.PNG)<\center>
 
 VoxGrab is fairly self explanatory, downloading subtitles one at a time can be a real pain! 
  Especially if you need subtitles for an entire season of a tv show. 
