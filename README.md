@@ -1,9 +1,9 @@
 # VoxGrab
 
 <p align="center">
-  <b>Subtitles the easy way, as served by <a href="http://thesubdb.com/">TheSubDB</a></b><br>
-  <br>
   <img src="https://github.com/nikolajlauridsen/VoxGrab/blob/master/screenshot.PNG?raw=true">
+  <br><br>
+  <b>Subtitles the easy way, as served by <a href="http://thesubdb.com/">TheSubDB</a></b><br>
 </p>
 
 VoxGrab is fairly self explanatory, downloading subtitles one at a time can be a real pain! 
