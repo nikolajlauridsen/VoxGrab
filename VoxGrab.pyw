@@ -69,6 +69,8 @@ class SubDownloader(Frame):
                              background='#f0f0f0',
                              width=600, height=400)
         self.file_frame = Frame(self.canvas)
+        self.progress_bar = ttk.Progressbar(self.master, orient="horizontal",
+                                            mode="determinate", length=620)
 
         self.create_widgets()
 
@@ -80,7 +82,7 @@ class SubDownloader(Frame):
 
         # Create folder text input frame
         folder_fame = Frame(self.master)
-        Entry(folder_fame, width=75,
+        Entry(folder_fame, width=80,
               textvariable=self.directory).grid(column=0, row=1, padx=0, sticky=W)
         ttk.Button(folder_fame, text='Load files',
                    command=self.load_files).grid(column=1, row=1, padx=10)
@@ -115,9 +117,10 @@ class SubDownloader(Frame):
         # Pack it all
         title_label.pack(pady=5)
         self.file_area.pack(padx=15, pady=5)
-        folder_fame.pack(padx=5, pady=5)
+        self.progress_bar.pack()
+        self.status_label.pack(pady=5)
+        folder_fame.pack(pady=5)
         button_pane.pack(pady=5)
-        self.status_label.pack(padx=5, pady=5)
         # Bind scrolling
         self.file_frame.bind("<Configure>", self.onFrameConfigure)
         self.file_frame.bind('<Enter>', self._bound_to_mousewheel)
@@ -200,8 +203,6 @@ class SubDownloader(Frame):
         and set status label
         """
         if len(self.files) > 0:
-            self.status.set('Downloading subtitles.')
-
             # Prepare downloader
             os.chdir(self.directory.get())
             downloader = SubtitleDownloader(self.check_flag.get())
@@ -224,6 +225,9 @@ class SubDownloader(Frame):
         """
         threads = []
 
+        # Prepare the GUI
+        self.progress_bar.configure(maximum=len(self.files))
+        self.status.set('Downloading subtitles.')
         # Start threads
         for n in range(min(10, len(self.files))):
             thread = threading.Thread(target=self._worker,
@@ -264,6 +268,7 @@ class SubDownloader(Frame):
             }
             Label(self.file_frame, **label_config).grid(row=_file["row"],
                                                         column=1)
+            self.progress_bar.step()
 
 
 root = Tk()
