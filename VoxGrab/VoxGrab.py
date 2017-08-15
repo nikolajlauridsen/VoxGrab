@@ -125,11 +125,12 @@ class VoxGrab(Frame):
                                                                  sticky=W)
         self.language_selector.grid(column=1, row=1, padx=10, sticky=W)
         ttk.Button(self.button_frame, text='Choose folder',
-                   command=self.prompt_directory).grid(column=2, row=1,
+                   command=self.prompt_directory).grid(column=3, row=1,
                                                        padx=10, sticky=E)
         ttk.Button(self.button_frame, text="Download subs",
-                   command=self.download_subs).grid(column=3, row=1,
+                   command=self.download_subs).grid(column=4, row=1,
                                                     padx=10, sticky=E)
+        self.button_frame.grid_columnconfigure(2, minsize=180)
 
         # Pack it all
         title_label.pack(pady=5)
