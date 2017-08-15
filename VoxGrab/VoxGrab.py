@@ -24,6 +24,8 @@ SOFTWARE.
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
+from tkinter import messagebox
+from tkinter.ttk import OptionMenu
 
 from VoxGrab.subtitledownloader import SubtitleDownloader
 from VoxGrab import COLORS
@@ -45,6 +47,8 @@ class VoxGrab(Frame):
         # String vars
         self.directory = StringVar()
         self.status = StringVar()
+        self.language = StringVar()
+        self.language.set('en')
         self.status.set("Please choose a folder")
 
         # Pseudo booleans
@@ -52,6 +56,17 @@ class VoxGrab(Frame):
         self.check_flag.set(1)
 
         self.files = []
+
+        # Get languages
+        try:
+            self.languages = SubtitleDownloader(0).get_languages()
+            # First element must be null, because tkinter makes no sense
+            self.languages.insert(0, None)
+        except Exception as e:
+            msg = "Error when fetching languages, defaulting to English\n" \
+                  + str(e)
+            messagebox.showerror("Connection error", msg)
+            self.languages = ['en']
 
         # Create widgets
         # The "important" widgets needed later
@@ -62,6 +77,10 @@ class VoxGrab(Frame):
         self.file_area = Frame(self.master)
         self.folder_fame = Frame(self.master)
         self.button_frame = Frame(self.master)
+
+        self.language_selector = OptionMenu(self.button_frame,
+                                            self.language,
+                                            *self.languages)
 
         self.canvas = Canvas(self.file_area, borderwidth=0,
                              background=COLORS['grey'],
@@ -101,11 +120,16 @@ class VoxGrab(Frame):
 
         # Create button pane
         Checkbutton(self.button_frame, text='Skip downloaded subs',
-                    variable=self.check_flag, justify=LEFT).grid(column=1, row=1, padx=100)
+                    variable=self.check_flag, justify=LEFT).grid(column=0,
+                                                                 row=1, padx=1,
+                                                                 sticky=W)
+        self.language_selector.grid(column=1, row=1, padx=10, sticky=W)
         ttk.Button(self.button_frame, text='Choose folder',
-                   command=self.prompt_directory).grid(column=2, row=1, padx=10)
+                   command=self.prompt_directory).grid(column=2, row=1,
+                                                       padx=10, sticky=E)
         ttk.Button(self.button_frame, text="Download subs",
-                   command=self.download_subs).grid(column=3, row=1, padx=10)
+                   command=self.download_subs).grid(column=3, row=1,
+                                                    padx=10, sticky=E)
 
         # Pack it all
         title_label.pack(pady=5)
@@ -198,7 +222,8 @@ class VoxGrab(Frame):
         if len(self.files) > 0:
             # Prepare downloader
             os.chdir(self.directory.get())
-            downloader = SubtitleDownloader(self.check_flag.get())
+            downloader = SubtitleDownloader(self.check_flag.get(),
+                                            lang=self.language.get())
             for _file in self.files:
                 self.queue.put(_file)
             parent_thread = threading.Thread(target=self._parent,

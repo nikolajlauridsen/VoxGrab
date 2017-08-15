@@ -31,12 +31,26 @@ from VoxGrab import COLORS
 class SubtitleDownloader:
     """Class handling interaction with thesubdb api"""
 
-    def __init__(self, check_flag):
+    def __init__(self, check_flag, lang='en'):
         self.base_url = 'http://api.thesubdb.com'
         self.user_agent = 'SubDB/1.0 (VoxGrab/1.2;' \
                           ' https://github.com/nikolajlauridsen/VoxGrab'
         self.header = {'User-Agent': self.user_agent}
         self.check_flag = check_flag
+        self.lang = lang
+
+    def get_languages(self):
+        """
+        Get the available languages from thesubdb
+        Throws error request fails, remember to catch this
+        (what I wouldn't do for a " throws Exception" right now)
+        :return: List of languages
+        """
+        payload = {"action": 'languages'}
+        res = requests.get(self.base_url, headers=self.header,
+                           params=payload, timeout=5)
+        res.raise_for_status()
+        return res.content.decode().split(',')
 
     @staticmethod
     def get_hash(name):
@@ -57,8 +71,9 @@ class SubtitleDownloader:
             file_model["color"] = COLORS["d-green"]
 
         else:
-            f_hash = self.get_hash(file_model['fileName'])
-            payload = {'action': 'download', 'hash': f_hash, 'language': 'en'}
+            payload = {'action': 'download',
+                       'hash': self.get_hash(file_model['fileName']),
+                       'language': self.lang}
             response = requests.get(self.base_url, headers=self.header,
                                     params=payload)
 
