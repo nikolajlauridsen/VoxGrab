@@ -26,20 +26,23 @@ import hashlib
 import os
 
 from VoxGrab import COLORS
+from VoxGrab import VERSION
+
+BASE_URL = 'http://api.thesubdb.com'
+USER_AGENT = 'SubDB/1.0 (VoxGrab/' + VERSION + '; ' \
+             'https://github.com/nikolajlauridsen/VoxGrab)'
+HEADER = {'User-Agent': USER_AGENT}
 
 
 class SubtitleDownloader:
     """Class handling interaction with thesubdb api"""
 
     def __init__(self, check_flag, lang='en'):
-        self.base_url = 'http://api.thesubdb.com'
-        self.user_agent = 'SubDB/1.0 (VoxGrab/1.2;' \
-                          ' https://github.com/nikolajlauridsen/VoxGrab'
-        self.header = {'User-Agent': self.user_agent}
         self.check_flag = check_flag
         self.lang = lang
 
-    def get_languages(self):
+    @staticmethod
+    def get_languages():
         """
         Get the available languages from thesubdb
         Throws error request fails, remember to catch this
@@ -47,7 +50,7 @@ class SubtitleDownloader:
         :return: List of languages
         """
         payload = {"action": 'languages'}
-        res = requests.get(self.base_url, headers=self.header,
+        res = requests.get(BASE_URL, headers=HEADER,
                            params=payload, timeout=5)
         res.raise_for_status()
         return [country.upper() for country in res.content.decode().split(',')]
@@ -74,7 +77,7 @@ class SubtitleDownloader:
             payload = {'action': 'download',
                        'hash': self.get_hash(file_model['fileName']),
                        'language': self.lang.lower()}
-            response = requests.get(self.base_url, headers=self.header,
+            response = requests.get(BASE_URL, headers=HEADER,
                                     params=payload)
 
             if response.status_code == 200:

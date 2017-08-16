@@ -6,3 +6,5 @@ COLORS = {
     'd-green': '#177245',
     'grey': '#f0f0f0'
 }
+
+VERSION = '1.3'

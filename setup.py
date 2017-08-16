@@ -3,6 +3,7 @@ import sys
 from cx_Freeze import setup, Executable
 import requests
 import os
+from VoxGrab import VERSION
 
 # Set missing path variables
 python_path = r"C:\Users\EUC\AppData\Local\Programs\Python\Python35"
@@ -30,7 +31,7 @@ exe = Executable("VoxGrab.pyw",
                  targetName="VoxGrab.exe")
 
 setup(name="VoxGrab",
-      version="1.2",
+      version=VERSION,
       description="Hassle free subtitles",
       options={"build_exe": build_exe_options},
       executables=[exe])

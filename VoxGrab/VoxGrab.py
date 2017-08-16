@@ -59,7 +59,7 @@ class VoxGrab(Frame):
 
         # Get languages
         try:
-            self.languages = SubtitleDownloader(0).get_languages()
+            self.languages = SubtitleDownloader.get_languages()
             # First element must be null, because tkinter makes no sense
             self.languages.insert(0, None)
         except Exception as e:
