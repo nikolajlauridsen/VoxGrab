@@ -48,7 +48,7 @@ class VoxGrab(Frame):
         self.directory = StringVar()
         self.status = StringVar()
         self.language = StringVar()
-        self.language.set('en')
+        self.language.set('EN')
         self.status.set("Please choose a folder")
 
         # Pseudo booleans

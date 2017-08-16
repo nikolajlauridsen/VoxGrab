@@ -50,7 +50,7 @@ class SubtitleDownloader:
         res = requests.get(self.base_url, headers=self.header,
                            params=payload, timeout=5)
         res.raise_for_status()
-        return res.content.decode().split(',')
+        return [country.upper() for country in res.content.decode().split(',')]
 
     @staticmethod
     def get_hash(name):
@@ -65,7 +65,7 @@ class SubtitleDownloader:
 
     def download_sub(self, file_model):
         """Request subtitle from thesubdb api and return true/false"""
-        file_path = file_model["fileName"][:-4] + '.ENG' + '.srt'
+        file_path = file_model["fileName"][:-4] + '.' + self.lang + '.srt'
         if os.path.isfile(file_path) and self.check_flag == 1:
             file_model["status"] = "Skipped"
             file_model["color"] = COLORS["d-green"]
@@ -73,7 +73,7 @@ class SubtitleDownloader:
         else:
             payload = {'action': 'download',
                        'hash': self.get_hash(file_model['fileName']),
-                       'language': self.lang}
+                       'language': self.lang.lower()}
             response = requests.get(self.base_url, headers=self.header,
                                     params=payload)
 
