@@ -121,16 +121,18 @@ class VoxGrab(Frame):
         # Create button pane
         Checkbutton(self.button_frame, text='Skip downloaded subs',
                     variable=self.check_flag, justify=LEFT).grid(column=0,
-                                                                 row=1, padx=1,
+                                                                 row=1, padx=10,
                                                                  sticky=W)
-        self.language_selector.grid(column=1, row=1, padx=10, sticky=W)
+        Label(self.button_frame, text='Language:').grid(column=1, row=1)
+        self.language_selector.grid(column=2, row=1, sticky=W)
+
         ttk.Button(self.button_frame, text='Choose folder',
-                   command=self.prompt_directory).grid(column=3, row=1,
+                   command=self.prompt_directory).grid(column=4, row=1,
                                                        padx=10, sticky=E)
         ttk.Button(self.button_frame, text="Download subs",
-                   command=self.download_subs).grid(column=4, row=1,
+                   command=self.download_subs).grid(column=5, row=1,
                                                     padx=10, sticky=E)
-        self.button_frame.grid_columnconfigure(2, minsize=180)
+        self.button_frame.grid_columnconfigure(3, minsize=120)
 
         # Pack it all
         title_label.pack(pady=5)
