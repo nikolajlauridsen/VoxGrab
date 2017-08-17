@@ -27,9 +27,9 @@ now simply click the download button and your subtitles will be downloaded.
 
 #### Where's my subtitles?
 VoxGrab will save the subtitles in the same folder as the media files under the same name, 
-but suffixed with .EN, or the country code for the selected language
+but suffixed with .EN (or the country code for the selected language).
 
-(this will let [Plex](https://www.plex.tv/) find the subtitles and properly qualify their language)
+This will let [Plex](https://www.plex.tv/) find the subtitles and properly qualify their language
 
 #### Language support
 TheSubDB supports multiple languages besides English:
