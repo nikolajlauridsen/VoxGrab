@@ -27,10 +27,12 @@ now simply click the download button and your subtitles will be downloaded.
 
 #### Where's my subtitles?
 VoxGrab will save the subtitles in the same folder as the media files under the same name, 
-but suffixed with .ENG (this will let [Plex](https://www.plex.tv/) find the subtitles and properly qualify them as English)
+but suffixed with .EN, or the country code for the selected language
 
-#### Why aren't you supporting more languages?
-TheSubDB also supports:
+(this will let [Plex](https://www.plex.tv/) find the subtitles and properly qualify their language)
+
+#### Language support
+TheSubDB supports multiple languages besides English:
 * Dutch
 * French
 * Italian
@@ -41,8 +43,9 @@ TheSubDB also supports:
 * Swedish
 * Turkish
 
-However since I speak none of those languages I chose to focus on other features first, 
-but multi language support is coming in version 1.3!
+To change the language of the subtitles, simple choose another languages from the dropdown menu.
+
+For more info about language support see [this](http://blog.thesubdb.com/post/8835404358/n-gram-based-text-categorization) blog post from TheSubDB
 
 # Install process
 #### Windows
