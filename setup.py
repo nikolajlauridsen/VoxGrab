@@ -28,7 +28,8 @@ if sys.platform == "win32":
 
 exe = Executable("VoxGrab.pyw",
                  base=base,
-                 targetName="VoxGrab.exe")
+                 targetName="VoxGrab.exe",
+                 icon='favicon.ico')
 
 setup(name="VoxGrab",
       version=VERSION,
