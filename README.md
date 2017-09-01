@@ -61,6 +61,17 @@ python -m pip install -r requirements.txt
 ```
 (You might have to use python3 or py instead of python depending on your system/install)
 
+##### Trouble with tkinter on linux?
+You might have to install tkinter manually by running
+```
+sudo apt-get install tk
+```
+or 
+```
+sudo pacman -S tk
+```
+Depending on your distribution.
+
 ##### Requirements
 * requests
 * Tkinter
